@@ -1,29 +1,24 @@
 <?php
 
+use App\Models\OpeningHour;
+use App\Models\RestaurantSetting;
+use App\Models\Table;
+use App\Models\Zone;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
 |--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "pest()" function to bind a different classes or traits.
-|
 */
 
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature', 'Unit');
 
 /*
 |--------------------------------------------------------------------------
 | Expectations
 |--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
 */
 
 expect()->extend('toBeOne', function () {
@@ -34,14 +29,40 @@ expect()->extend('toBeOne', function () {
 |--------------------------------------------------------------------------
 | Functions
 |--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
 */
 
-function something()
+/**
+ * Seed a minimal "open restaurant" for tests that need full environment.
+ *
+ * Returns: ['settings' => RestaurantSetting, 'zone' => Zone, 'tables' => Table[]]
+ */
+function seedOpenRestaurant(): array
 {
-    // ..
+    $settings = RestaurantSetting::create([
+        'name'                        => 'Test Restaurant',
+        'contact_email'               => 'info@test.cz',
+        'contact_phone'               => '+420123456789',
+        'auto_confirm_reservations'   => false,
+        'max_guests'                  => 20,
+        'max_duration_minutes'        => 240,
+        'confirmation_timeout_minutes' => 30,
+        'reservation_cutoff_hours'    => 2,
+        'min_advance_hours'           => 0,
+    ]);
+
+    // Opening hours: Mon-Sat open 10:00-22:00, Sun closed
+    for ($day = 1; $day <= 6; $day++) {
+        OpeningHour::factory()->day($day)->create();
+    }
+    OpeningHour::factory()->day(7)->closed()->create();
+
+    // Default zone with 2 tables (capacity 4 each = 8 total)
+    $zone = Zone::factory()->default()->create(['name' => 'Hlavní sál']);
+
+    $tables = [
+        Table::factory()->create(['zone_id' => $zone->id, 'name' => 'Stůl A', 'capacity' => 4]),
+        Table::factory()->create(['zone_id' => $zone->id, 'name' => 'Stůl B', 'capacity' => 4]),
+    ];
+
+    return compact('settings', 'zone', 'tables');
 }

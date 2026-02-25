@@ -37,22 +37,22 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+        Děkujeme za registraci! Než začnete, ověřte prosím svou e-mailovou adresu kliknutím na odkaz, který jsme vám právě zaslali. Pokud e-mail nedorazil, rádi vám pošleme nový.
     </div>
 
     @if (session('status') == 'verification-link-sent')
         <div class="mb-4 font-medium text-sm text-green-600">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
+            Na e-mailovou adresu zadanou při registraci byl odeslán nový ověřovací odkaz.
         </div>
     @endif
 
     <div class="mt-4 flex items-center justify-between">
         <x-primary-button wire:click="sendVerification">
-            {{ __('Resend Verification Email') }}
+            Znovu odeslat ověřovací e-mail
         </x-primary-button>
 
         <button wire:click="logout" type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            {{ __('Log Out') }}
+            Odhlásit se
         </button>
     </div>
 </div>

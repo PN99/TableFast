@@ -23,16 +23,22 @@ new class extends Component
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" wire:navigate>
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                    <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-1">
+                        <span class="text-xl font-bold text-amber-600">Table</span>
+                        <span class="text-xl font-bold text-gray-800">Fast</span>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
+                        {{ __('ui.nav.my_reservations') }}
                     </x-nav-link>
+                    @if (auth()->user()->isAdmin())
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" wire:navigate>
+                            {{ __('ui.nav.administration') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -52,14 +58,23 @@ new class extends Component
                     </x-slot>
 
                     <x-slot name="content">
+                        <!-- Language Switcher -->
+                        <div class="px-4 py-2 flex items-center gap-2 border-b border-gray-100">
+                            <a href="{{ route('locale.set', 'cs') }}"
+                               class="text-xs font-bold transition-colors {{ app()->getLocale() === 'cs' ? 'text-amber-600' : 'text-gray-400 hover:text-gray-700' }}">CZ</a>
+                            <span class="text-gray-200 text-xs">|</span>
+                            <a href="{{ route('locale.set', 'en') }}"
+                               class="text-xs font-bold transition-colors {{ app()->getLocale() === 'en' ? 'text-amber-600' : 'text-gray-400 hover:text-gray-700' }}">EN</a>
+                        </div>
+
                         <x-dropdown-link :href="route('profile')" wire:navigate>
-                            {{ __('Profile') }}
+                            {{ __('ui.nav.profile') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
                         <button wire:click="logout" class="w-full text-start">
                             <x-dropdown-link>
-                                {{ __('Log Out') }}
+                                {{ __('ui.nav.logout_full') }}
                             </x-dropdown-link>
                         </button>
                     </x-slot>
@@ -82,8 +97,13 @@ new class extends Component
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                {{ __('Dashboard') }}
+                {{ __('ui.nav.my_reservations') }}
             </x-responsive-nav-link>
+            @if (auth()->user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" wire:navigate>
+                    {{ __('ui.nav.administration') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -94,14 +114,23 @@ new class extends Component
             </div>
 
             <div class="mt-3 space-y-1">
+                <!-- Mobile Language Switcher -->
+                <div class="px-4 py-2 flex items-center gap-3 border-b border-gray-100">
+                    <a href="{{ route('locale.set', 'cs') }}"
+                       class="text-xs font-bold transition-colors {{ app()->getLocale() === 'cs' ? 'text-amber-600' : 'text-gray-400' }}">🇨🇿 CZ</a>
+                    <span class="text-gray-200 text-xs">|</span>
+                    <a href="{{ route('locale.set', 'en') }}"
+                       class="text-xs font-bold transition-colors {{ app()->getLocale() === 'en' ? 'text-amber-600' : 'text-gray-400' }}">🇬🇧 EN</a>
+                </div>
+
                 <x-responsive-nav-link :href="route('profile')" wire:navigate>
-                    {{ __('Profile') }}
+                    {{ __('ui.nav.profile') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
                 <button wire:click="logout" class="w-full text-start">
                     <x-responsive-nav-link>
-                        {{ __('Log Out') }}
+                        {{ __('ui.nav.logout_full') }}
                     </x-responsive-nav-link>
                 </button>
             </div>
